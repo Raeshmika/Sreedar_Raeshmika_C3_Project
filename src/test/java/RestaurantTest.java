@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,4 +66,20 @@ class RestaurantTest {
                 ()->restaurant.removeFromMenu("French fries"));
     }
     //<<<<<<<<<<<<<<<<<<<<<<<MENU>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    @Test
+    public void given_menu_calculate_the_total_cost_of_selected_menu_items() {
+        Integer expectedTotal = restaurant.getMenu().stream().filter(item -> item.getName().equals("Dumplings") || item.getName().equals("Sweet corn soup"))
+                .map(Item::getPrice).reduce(Integer::sum).get();
+        List<String> selectedItems = restaurant.getMenu().stream().filter(item -> item.getName().equals("Dumplings") || item.getName().equals("Sweet corn soup"))
+                .map(Item::getName).collect(Collectors.toList());
+        Integer actualValue = restaurant.calculateTotalCost(selectedItems);
+        assertEquals(expectedTotal,actualValue);
+    }
+
+    @Test
+    public void given_menu_and_no_items_selected_return_0_on_calling_calculate_the_total_cost_of_items() {
+        Integer expectedTotal = 0;
+        Integer actualValue = restaurant.calculateTotalCost(new ArrayList<>());
+        assertEquals(expectedTotal,actualValue);
+    }
 }

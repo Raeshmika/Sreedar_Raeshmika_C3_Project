@@ -49,6 +49,9 @@ public class Restaurant {
 
         menu.remove(itemToBeRemoved);
     }
+    public Integer calculateTotalCost(List<String> menuItems) {
+        return null;
+    }
     public void displayDetails(){
         System.out.println("Restaurant:"+ name + "\n"
                 +"Location:"+ location + "\n"
