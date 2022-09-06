@@ -44,6 +44,16 @@ class RestaurantTest {
 
     }
 
+    @Test
+    public void is_restaurant_open_should_return_false_if_time_is_before_opening_time(){
+        LocalTime outsideTime = LocalTime.parse("09:30:00");
+        Restaurant mockedRestaurant = Mockito.spy(restaurant);
+        Mockito.when(mockedRestaurant.getCurrentTime()).thenReturn(outsideTime);
+        boolean result = mockedRestaurant.isRestaurantOpen();
+        Assertions.assertFalse(result);
+
+    }
+
     //<<<<<<<<<<<<<<<<<<<<<<<<<OPEN/CLOSED>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
@@ -65,9 +75,23 @@ class RestaurantTest {
         assertThrows(ItemNotFoundException.class,
                 ()->restaurant.removeFromMenu("French fries"));
     }
+
+    @Test
+    public void given_an_item_find_item_by_name_should_return_item_object() throws ItemNotFoundException {
+        Item  item = restaurant.findItemByName("Sweet corn soup");
+        Assertions.assertNotNull(item);
+        Assertions.assertEquals("Sweet corn soup", item.getName());
+    }
+
+    @Test
+    public void finding_item_that_does_not_exist_should_throw_exception() throws ItemNotFoundException {
+        assertThrows(ItemNotFoundException.class,
+                ()->restaurant.removeFromMenu("French fries"));
+    }
+
     //<<<<<<<<<<<<<<<<<<<<<<<MENU>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     @Test
-    public void given_menu_calculate_the_total_cost_of_selected_menu_items() {
+    public void given_menu_calculate_the_total_cost_of_selected_menu_items() throws ItemNotFoundException {
         Integer expectedTotal = restaurant.getMenu().stream().filter(item -> item.getName().equals("Dumplings") || item.getName().equals("Sweet corn soup"))
                 .map(Item::getPrice).reduce(Integer::sum).get();
         List<String> selectedItems = restaurant.getMenu().stream().filter(item -> item.getName().equals("Dumplings") || item.getName().equals("Sweet corn soup"))
@@ -77,9 +101,19 @@ class RestaurantTest {
     }
 
     @Test
-    public void given_menu_and_no_items_selected_return_0_on_calling_calculate_the_total_cost_of_items() {
+    public void given_menu_and_no_items_selected_return_0_on_calling_calculate_the_total_cost_of_items() throws ItemNotFoundException {
         Integer expectedTotal = 0;
         Integer actualValue = restaurant.calculateTotalCost(new ArrayList<>());
         assertEquals(expectedTotal,actualValue);
+    }
+
+    @Test
+    public void get_current_time_should_not_return_null() {
+        assertNotNull(restaurant.getCurrentTime());
+    }
+
+    @Test
+    public void get_name_should_not_return_null() {
+        assertNotNull(restaurant.getName());
     }
 }

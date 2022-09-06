@@ -1,4 +1,3 @@
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +5,9 @@ import java.util.List;
 public class Restaurant {
     private String name;
     private String location;
-    public LocalTime openingTime;
-    public LocalTime closingTime;
-    private List<Item> menu = new ArrayList<Item>();
+    private LocalTime openingTime;
+    private LocalTime closingTime;
+    private List<Item> menu = new ArrayList<>();
 
     public Restaurant(String name, String location, LocalTime openingTime, LocalTime closingTime) {
         this.name = name;
@@ -28,12 +27,12 @@ public class Restaurant {
         return menu;
     }
 
-    private Item findItemByName(String itemName){
+    public Item findItemByName(String itemName) throws ItemNotFoundException {
         for(Item item: menu) {
             if(item.getName().equals(itemName))
                 return item;
         }
-        return null;
+        throw new ItemNotFoundException(itemName);
     }
 
     public void addToMenu(String name, int price) {
@@ -42,15 +41,18 @@ public class Restaurant {
     }
     
     public void removeFromMenu(String itemName) throws ItemNotFoundException {
-
         Item itemToBeRemoved = findItemByName(itemName);
         if (itemToBeRemoved == null)
             throw new ItemNotFoundException(itemName);
-
         menu.remove(itemToBeRemoved);
     }
-    public Integer calculateTotalCost(List<String> menuItems) {
-        return null;
+    public Integer calculateTotalCost(List<String> menuItems) throws ItemNotFoundException {
+        int result = 0;
+        for (String menuItem : menuItems) {
+            Item item = findItemByName(menuItem);
+            result += item.getPrice();
+        }
+        return result;
     }
     public void displayDetails(){
         System.out.println("Restaurant:"+ name + "\n"
@@ -60,9 +62,7 @@ public class Restaurant {
                 +"Menu:"+"\n"+getMenu());
 
     }
-
     public String getName() {
         return name;
     }
-
 }
